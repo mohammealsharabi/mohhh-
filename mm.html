@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار JavaScript التفاعلي</title>
+    <style>
+        /* ===== الأنماط العامة ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* ===== الترويسة ===== */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        /* ===== شريط التقدم ===== */
+        .progress-container {
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: #27ae60;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+        
+        /* ===== التبويبات ===== */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            margin-left: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background-color: #fff;
+            border-bottom: 2px solid #27ae60;
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* ===== البطاقات ===== */
+        .card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        /* ===== الأزرار ===== */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn:hover {
+            background-color: #219653;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #27ae60;
+            color: #27ae60;
+        }
+        
+        .btn-outline:hover {
+            background-color: #27ae60;
+            color: white;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-selected {
+            background-color: #27ae60;
+            color: white;
+        }
+        
+        /* ===== الإدخال ===== */
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .radio-option input {
+            margin-left: 10px;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: monospace;
+            direction: ltr;
+            resize: vertical;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        
+        /* ===== النتائج ===== */
+        .result-card {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .result-score {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .result-message {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .score-green {
+            color: #27ae60;
+        }
+        
+        .score-yellow {
+            color: #f39c12;
+        }
+        
+        .score-red {
+            color: #e74c3c;
+        }
+        
+        /* ===== التعليقات ===== */
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        
+        .check-icon {
+            color: #27ae60;
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+        
+        .x-icon {
+            color: #e74c3c;
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+        
+        /* ===== قسم إكمال الفراغات ===== */
+        .fill-blanks-help {
+            background-color: #e8f4fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-right: 4px solid #3498db;
+        }
+        
+        .fill-blanks-help h4 {
+            color: #2980b9;
+            margin-bottom: 10px;
+        }
+        
+        .fill-blanks-help .words {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .fill-blanks-help .word {
+            background-color: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #bdc3c7;
+            font-weight: bold;
+        }
+        
+        .blank-input {
+            display: inline-block;
+            width: 150px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 0 5px;
+        }
+        
+        /* ===== قسم الوصل بين العمودين ===== */
+        .matching-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .matching-column {
+            flex: 1;
+        }
+        
+        .matching-item {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .matching-item.selected {
+            background-color: #e8f4fd;
+            border-right: 4px solid #3498db;
+        }
+        
+        .matching-item.matched {
+            background-color: #d4edda;
+            border-right: 4px solid #27ae60;
+            cursor: default;
+        }
+        
+        .matching-lines {
+            position: relative;
+            flex: 0.2;
+        }
+        
+        .matching-line {
+            position: absolute;
+            height: 2px;
+            background-color: #27ae60;
+            transform-origin: 0 0;
+        }
+        
+        .matching-result {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        /* ===== التوافقية مع الشاشات الصغيرة ===== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                flex: 1 0 auto;
+                text-align: center;
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+            
+            .matching-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>اختبار JavaScript التفاعلي</h1>
+            <p>اختبر معلوماتك في JavaScript من خلال هذا الاختبار الشامل</p>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress" id="progress-bar"></div>
+            </div>
+            <div class="progress-text" id="progress-text">التقدم: 0%</div>
+        </div>
+        
+        <div id="quiz-container">
+            <div class="tabs" id="tabs">
+                <div class="tab active" data-tab="true-false">صح أو خطأ</div>
+                <div class="tab" data-tab="multiple-choice">اختيار من متعدد</div>
+                <div class="tab" data-tab="fill-blanks">إكمال الفراغات</div>
+                <div class="tab" data-tab="matching">وصل بين العمودين</div>
+            </div>
+            
+            <div class="tab-content active" id="true-false">
+                <div id="true-false-questions"></div>
+            </div>
+            
+            <div class="tab-content" id="multiple-choice">
+                <div id="multiple-choice-questions"></div>
+            </div>
+            
+            <div class="tab-content" id="fill-blanks">
+                <div class="fill-blanks-help">
+                    <h4>الكلمات المساعدة:</h4>
+                    <div class="words">
+                        <span class="word">setTimeout</span>
+                        <span class="word">Name</span>
+                        <span class="word">appendChild</span>
+                        <span class="word">const</span>
+                        <span class="word">function</span>
+                        <span class="word">input</span>
+                        <span class="word">JSON.stringify</span>
+                        <span class="word">setInterval</span>
+                        <span class="word">toggle</span>
+                    </div>
+                </div>
+                <div id="fill-blanks-questions"></div>
+            </div>
+            
+            <div class="tab-content" id="matching">
+                <div id="matching-questions"></div>
+            </div>
+            
+            <div class="text-center" style="text-align: center; margin-top: 20px;">
+                <button class="btn" id="check-answers">تحقق من الإجابات</button>
+            </div>
+        </div>
+        
+        <div id="results-container" style="display: none;">
+            <!-- سيتم ملء هذا القسم بواسطة JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // ===== البيانات =====
+        
+        // أسئلة صح أو خطأ
+        const trueFalseQuestions = [
+            {
+                question: "JavaScript لغة تعمل على المتصفح فقط.",
+                answer: "خطأ"
+            },
+            {
+                question: "يمكن استخدام const لتغيير قيمة المتغير لاحقًا.",
+                answer: "خطأ"
+            },
+            {
+                question: "يتم استخدام addEventListener لإضافة حدث لعنصر HTML.",
+                answer: "صح"
+            },
+            {
+                question: "الكلمة المفتاحية let تتيح تعريف متغير يمكن تغييره لاحقًا.",
+                answer: "صح"
+            },
+            {
+                question: "يمكن استخدام getElementById لاختيار أكثر من عنصر.",
+                answer: "خطأ"
+            },
+            {
+                question: "يمكن استخدام JSON.parse لتحويل JSON إلى كائن في JavaScript.",
+                answer: "صح"
+            },
+            {
+                question: "الدالة setTimeout تستخدم لتكرار الكود كل فترة.",
+                answer: "خطأ"
+            },
+            {
+                question: "classList تُستخدم لإضافة وحذف الكلاسات لعناصر HTML.",
+                answer: "صح"
+            },
+            {
+                question: "jQuery هي مكتبة JavaScript لتسهيل التعامل مع DOM.",
+                answer: "صح"
+            },
+            {
+                question: "JavaScript تعمل فقط على السيرفر.",
+                answer: "خطأ"
+            },
+            {
+                question: "يجب استخدام var دائمًا عند تعريف المتغيرات.",
+                answer: "خطأ"
+            },
+            {
+                question: "appendChild تُستخدم لإضافة عنصر داخل عنصر آخر.",
+                answer: "صح"
+            },
+            {
+                question: "classList.remove() تُستخدم لإضافة كلاس جديد.",
+                answer: "خطأ"
+            },
+            {
+                question: "trim() تحذف الفراغات من بداية النص ونهايته فقط.",
+                answer: "صح"
+            },
+            {
+                question: "setInterval تُنفذ الكود مرة واحدة بعد تأخير.",
+                answer: "خطأ"
+            }
+        ];
+        
+        // أسئلة الاختيار من متعدد
+        const multipleChoiceQuestions = [
+            {
+                question: "ما الكلمة المفتاحية لتعريف ثابت؟",
+                options: ["var", "let", "const"],
+                answer: "const"
+            },
+            {
+                question: "أي دالة تُستخدم لتأخير التنفيذ؟",
+                options: ["setInterval", "delay", "setTimeout"],
+                answer: "setTimeout"
+            },
+            {
+                question: "كيف نصل إلى عنصر باستخدام الـ ID؟",
+                options: ["getElementByTagName", "getElementsByName", "getElementById"],
+                answer: "getElementById"
+            },
+            {
+                question: "متى يتم تنفيذ DOMContentLoaded؟",
+                options: ["عند فتح الصفحة", "عند النقر على زر", "عند تحميل المحتوى بالكامل"],
+                answer: "عند تحميل المحتوى بالكامل"
+            },
+            {
+                question: "كيف نضيف عنصر داخل عنصر آخر؟",
+                options: ["appendChild", "insertInto", "pushToDom"],
+                answer: "appendChild"
+            },
+            {
+                question: "نوع البيانات للنصوص؟",
+                options: ["String", "Number", "Boolean"],
+                answer: "String"
+            },
+            {
+                question: "دالة تضيف عنصر إلى نهاية المصفوفة؟",
+                options: ["push()", "pop()", "shift()"],
+                answer: "push()"
+            },
+            {
+                question: "أي دالة تُستخدم لإنشاء عنصر جديد؟",
+                options: ["makeElement", "newElement", "createElement"],
+                answer: "createElement"
+            },
+            {
+                question: "إضافة كلاس باستخدام classList؟",
+                options: ["classList.set('active')", "classList.add('active')", "classList.push('active')"],
+                answer: "classList.add('active')"
+            },
+            {
+                question: "لتكرار كود كل فترة؟",
+                options: ["repeat", "timeout", "setInterval"],
+                answer: "setInterval"
+            },
+            {
+                question: "وظيفة trim()؟",
+                options: ["حذف جميع الفراغات من النص", "حذف الفراغات من أول وآخر النص", "تقسيم النص إلى مصفوفة"],
+                answer: "حذف الفراغات من أول وآخر النص"
+            },
+            {
+                question: "الحدث المستخدم عند التمرير؟",
+                options: ["move", "slide", "scroll"],
+                answer: "scroll"
+            }
+        ];
+        
+        // أسئلة إكمال الفراغات
+        const fillBlanksQuestions = [
+            {
+                question: "تُستخدم الدالة __________ لتنفيذ كود بعد فترة زمنية.",
+                answer: "setTimeout"
+            },
+            {
+                question: "للحصول على عنصر باسم نستخدم getElementsBy__________.",
+                answer: "Name"
+            },
+            {
+                question: "تُستخدم __________ لإضافة عنصر داخل عنصر آخر.",
+                answer: "appendChild"
+            },
+            {
+                question: "المتغير الذي لا يمكن تغييره يُعرف بكلمة __________.",
+                answer: "const"
+            },
+            {
+                question: "كلمة تعريف دالة هي __________.",
+                answer: "function"
+            },
+            {
+                question: "يُستخدم حدث __________ عند الكتابة داخل input.",
+                answer: "input"
+            },
+            {
+                question: "تحويل كائن إلى JSON يتم بـ __________.",
+                answer: "JSON.stringify"
+            },
+            {
+                question: "تأخير تنفيذ كود يتم بـ __________.",
+                answer: "setTimeout"
+            },
+            {
+                question: "تكرار تنفيذ كود يتم بـ __________.",
+                answer: "setInterval"
+            },
+            {
+                question: "إظهار/إخفاء عنصر يتم بـ classList.__________.",
+                answer: "toggle"
+            }
+        ];
+        
+        // أسئلة الوصل بين العمودين
+        const matchingQuestions = [
+            {
+                term: "DOM",
+                meaning: "التعامل مع عناصر الصفحة"
+            },
+            {
+                term: "JSON",
+                meaning: "تنسيق لتبادل البيانات"
+            },
+            {
+                term: "setTimeout",
+                meaning: "تأخير تنفيذ الكود"
+            },
+            {
+                term: "getElementById",
+                meaning: "الوصول لعنصر باستخدام الـ id"
+            }
+        ];
+        
+        // ===== المتغيرات العامة =====
+        let userAnswers = {
+            trueFalse: Array(trueFalseQuestions.length).fill(""),
+            multipleChoice: Array(multipleChoiceQuestions.length).fill(""),
+            fillBlanks: Array(fillBlanksQuestions.length).fill(""),
+            matching: {
+                selected: null,
+                matches: []
+            }
+        };
+        
+        let feedback = {
+            trueFalse: Array(trueFalseQuestions.length).fill(null),
+            multipleChoice: Array(multipleChoiceQuestions.length).fill(null),
+            fillBlanks: Array(fillBlanksQuestions.length).fill(null),
+            matching: Array(matchingQuestions.length).fill(null)
+        };
+        
+        // ===== الدوال المساعدة =====
+        
+        // تحديث شريط التقدم
+        function updateProgress() {
+            const totalQuestions = trueFalseQuestions.length + multipleChoiceQuestions.length + 
+                                  fillBlanksQuestions.length + matchingQuestions.length;
+            
+            const answeredTrueFalse = userAnswers.trueFalse.filter(a => a !== "").length;
+            const answeredMultipleChoice = userAnswers.multipleChoice.filter(a => a !== "").length;
+            const answeredFillBlanks = userAnswers.fillBlanks.filter(a => a !== "").length;
+            const answeredMatching = userAnswers.matching.matches.length;
+            
+            const answeredQuestions = answeredTrueFalse + answeredMultipleChoice + 
+                                     answeredFillBlanks + answeredMatching;
+            
+            const progressPercentage = Math.round((answeredQuestions / totalQuestions) * 100);
+            
+            document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
+            document.getElementById('progress-text').textContent = `التقدم: ${progressPercentage}%`;
+        }
+        
+        // إنشاء أسئلة صح أو خطأ
+        function createTrueFalseQuestions() {
+            const container = document.getElementById('true-false-questions');
+            container.innerHTML = '';
+            
+            trueFalseQuestions.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                const questionText = document.createElement('h3');
+                questionText.textContent = `${index + 1}. ${q.question}`;
+                
+                const buttonGroup = document.createElement('div');
+                buttonGroup.className = 'btn-group';
+                
+                const trueBtn = document.createElement('button');
+                trueBtn.className = `btn btn-outline ${userAnswers.trueFalse[index] === 'صح' ? 'btn-selected' : ''}`;
+                trueBtn.textContent = 'صح';
+                trueBtn.onclick = () => {
+                    userAnswers.trueFalse[index] = 'صح';
+                    feedback.trueFalse[index] = (userAnswers.trueFalse[index] === q.answer);
+                    createTrueFalseQuestions(); // إعادة رسم الأسئلة
+                    updateProgress();
+                };
+                
+                const falseBtn = document.createElement('button');
+                falseBtn.className = `btn btn-outline ${userAnswers.trueFalse[index] === 'خطأ' ? 'btn-selected' : ''}`;
+                falseBtn.textContent = 'خطأ';
+                falseBtn.onclick = () => {
+                    userAnswers.trueFalse[index] = 'خطأ';
+                    feedback.trueFalse[index] = (userAnswers.trueFalse[index] === q.answer);
+                    createTrueFalseQuestions(); // إعادة رسم الأسئلة
+                    updateProgress();
+                };
+                
+                buttonGroup.appendChild(trueBtn);
+                buttonGroup.appendChild(falseBtn);
+                
+                card.appendChild(questionText);
+                card.appendChild(buttonGroup);
+                
+                // إضافة التعليقات إذا كانت موجودة
+                if (feedback.trueFalse[index] !== null) {
+                    const feedbackDiv = document.createElement('div');
+                    feedbackDiv.className = `feedback ${feedback.trueFalse[index] ? 'correct' : 'incorrect'}`;
+                    
+                    if (feedback.trueFalse[index]) {
+                        feedbackDiv.innerHTML = '<span class="check-icon">✓</span> إجابة صحيحة!';
+                    } else {
+                        feedbackDiv.innerHTML = `<span class="x-icon">✗</span> إجابة خاطئة! الإجابة الصحيحة هي: ${q.answer}`;
+                    }
+                    
+                    card.appendChild(feedbackDiv);
+                }
+                
+                container.appendChild(card);
+            });
+        }
+        
+        // إنشاء أسئلة الاختيار من متعدد
+        function createMultipleChoiceQuestions() {
+            const container = document.getElementById('multiple-choice-questions');
+            container.innerHTML = '';
+            
+            multipleChoiceQuestions.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                const questionText = document.createElement('h3');
+                questionText.textContent = `${index + 1}. ${q.question}`;
+                
+                const radioGroup = document.createElement('div');
+                radioGroup.className = 'radio-group';
+                
+                q.options.forEach((option, optIndex) => {
+                    const radioOption = document.createElement('div');
+                    radioOption.className = 'radio-option';
+                    
+                    const label = document.createElement('label');
+                    label.textContent = option;
+                    
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = `q-${index}`;
+                    input.value = option;
+                    input.checked = userAnswers.multipleChoice[index] === option;
+                    input.onchange = () => {
+                        userAnswers.multipleChoice[index] = option;
+                        feedback.multipleChoice[index] = (userAnswers.multipleChoice[index] === q.answer);
+                        createMultipleChoiceQuestions(); // إعادة رسم الأسئلة
+                        updateProgress();
+                    };
+                    
+                    radioOption.appendChild(label);
+                    radioOption.appendChild(input);
+                    radioGroup.appendChild(radioOption);
+                });
+                
+                card.appendChild(questionText);
+                card.appendChild(radioGroup);
+                
+                // إضافة التعليقات إذا كانت موجودة
+                if (feedback.multipleChoice[index] !== null) {
+                    const feedbackDiv = document.createElement('div');
+                    feedbackDiv.className = `feedback ${feedback.multipleChoice[index] ? 'correct' : 'incorrect'}`;
+                    
+                    if (feedback.multipleChoice[index]) {
+                        feedbackDiv.innerHTML = '<span class="check-icon">✓</span> إجابة صحيحة!';
+                    } else {
+                        feedbackDiv.innerHTML = `<span class="x-icon">✗</span> إجابة خاطئة! الإجابة الصحيحة هي: ${q.answer}`;
+                    }
+                    
+                    card.appendChild(feedbackDiv);
+                }
+                
+                container.appendChild(card);
+            });
+        }
+        
+        // إنشاء أسئلة إكمال الفراغات
+        function createFillBlanksQuestions() {
+            const container = document.getElementById('fill-blanks-questions');
+            container.innerHTML = '';
+            
+            fillBlanksQuestions.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                const questionText = document.createElement('h3');
+                questionText.textContent = `${index + 1}. `;
+                
+                // تقسيم السؤال عند الفراغ
+                const questionParts = q.question.split('__________');
+                
+                const questionContainer = document.createElement('div');
+                
+                // إضافة الجزء الأول من السؤال
+                questionContainer.appendChild(document.createTextNode(questionParts[0]));
+                
+                // إضافة حقل الإدخال
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'blank-input';
+                input.value = userAnswers.fillBlanks[index];
+                input.placeholder = 'اكتب الإجابة هنا';
+                input.oninput = (e) => {
+                    userAnswers.fillBlanks[index] = e.target.value;
+                    updateProgress();
+                };
+                questionContainer.appendChild(input);
+                
+                // إضافة الجزء الثاني من السؤال إذا وجد
+                if (questionParts.length > 1) {
+                    questionContainer.appendChild(document.createTextNode(questionParts[1]));
+                }
+                
+                questionText.appendChild(questionContainer);
+                
+                card.appendChild(questionText);
+                
+                // إضافة التعليقات إذا كانت موجودة
+                if (feedback.fillBlanks[index] !== null) {
+                    const feedbackDiv = document.createElement('div');
+                    feedbackDiv.className = `feedback ${feedback.fillBlanks[index] ? 'correct' : 'incorrect'}`;
+                    
+                    if (feedback.fillBlanks[index]) {
+                        feedbackDiv.innerHTML = '<span class="check-icon">✓</span> إجابة صحيحة!';
+                    } else {
+                        feedbackDiv.innerHTML = `<span class="x-icon">✗</span> إجابة خاطئة! الإجابة الصحيحة هي: ${q.answer}`;
+                    }
+                    
+                    card.appendChild(feedbackDiv);
+                }
+                
+                container.appendChild(card);
+            });
+        }
+        
+        // إنشاء أسئلة الوصل بين العمودين
+        function createMatchingQuestions() {
+            const container = document.getElementById('matching-questions');
+            container.innerHTML = '';
+            
+            // إنشاء حاويات العمودين
+            const matchingContainer = document.createElement('div');
+            matchingContainer.className = 'matching-container';
+            
+            // العمود الأول (المصطلحات)
+            const termsColumn = document.createElement('div');
+            termsColumn.className = 'matching-column';
+            
+            // العمود الوسط (الخطوط)
+            const linesColumn = document.createElement('div');
+            linesColumn.className = 'matching-lines';
+            linesColumn.id = 'matching-lines';
+            
+            // العمود الثاني (المعاني)
+            const meaningsColumn = document.createElement('div');
+            meaningsColumn.className = 'matching-column';
+            
+            // إضافة المصطلحات
+            matchingQuestions.forEach((q, index) => {
+                const termItem = document.createElement('div');
+                termItem.className = 'matching-item';
+                termItem.textContent = q.term;
+                termItem.dataset.index = index;
+                
+                // التحقق إذا كان هذا المصطلح تم مطابقته بالفعل
+                const isMatched = userAnswers.matching.matches.some(match => match.termIndex === index);
+                
+                if (isMatched) {
+                    termItem.classList.add('matched');
+                } else {
+                    termItem.onclick = () => {
+                        // إلغاء تحديد المصطلح السابق إذا وجد
+                        document.querySelectorAll('.matching-item.selected').forEach(item => {
+                            item.classList.remove('selected');
+                        });
+                        
+                        // تحديد هذا المصطلح
+                        termItem.classList.add('selected');
+                        userAnswers.matching.selected = {
+                            type: 'term',
+                            index: index
+                        };
+                        
+                        // التحقق إذا كان هناك معنى محدد
+                        checkForMatch();
+                    };
+                }
+                
+                termsColumn.appendChild(termItem);
+            });
+            
+            // إضافة المعاني (بترتيب عشوائي)
+            const shuffledMeanings = [...matchingQuestions].sort(() => Math.random() - 0.5);
+            
+            shuffledMeanings.forEach((q, index) => {
+                const meaningItem = document.createElement('div');
+                meaningItem.className = 'matching-item';
+                meaningItem.textContent = q.meaning;
+                
+                // البحث عن الفهرس الأصلي لهذا المعنى
+                const originalIndex = matchingQuestions.findIndex(item => item.meaning === q.meaning);
+                meaningItem.dataset.index = originalIndex;
+                
+                // التحقق إذا كان هذا المعنى تم مطابقته بالفعل
+                const isMatched = userAnswers.matching.matches.some(match => match.meaningIndex === originalIndex);
+                
+                if (isMatched) {
+                    meaningItem.classList.add('matched');
+                } else {
+                    meaningItem.onclick = () => {
+                        // إلغاء تحديد المعنى السابق إذا وجد
+                        document.querySelectorAll('.matching-item.selected').forEach(item => {
+                            item.classList.remove('selected');
+                        });
+                        
+                        // تحديد هذا المعنى
+                        meaningItem.classList.add('selected');
+                        userAnswers.matching.selected = {
+                            type: 'meaning',
+                            index: originalIndex
+                        };
+                        
+                        // التحقق إذا كان هناك مصطلح محدد
+                        checkForMatch();
+                    };
+                }
+                
+                meaningsColumn.appendChild(meaningItem);
+            });
+            
+            matchingContainer.appendChild(termsColumn);
+            matchingContainer.appendChild(linesColumn);
+            matchingContainer.appendChild(meaningsColumn);
+            
+            container.appendChild(matchingContainer);
+            
+            // إضافة نتيجة المطابقة
+            const matchingResult = document.createElement('div');
+            matchingResult.className = 'matching-result';
+            matchingResult.textContent = `تم مطابقة ${userAnswers.matching.matches.length} من ${matchingQuestions.length}`;
+            container.appendChild(matchingResult);
+            
+            // رسم الخطوط بين العناصر المتطابقة
+            drawMatchingLines();
+        }
+        
+        // التحقق من المطابقة
+        function checkForMatch() {
+            const selected = userAnswers.matching.selected;
+            
+            if (!selected) return;
+            
+            // البحث عن عنصر آخر محدد من النوع المختلف
+            const otherSelectedElements = document.querySelectorAll('.matching-item.selected');
+            
+            if (otherSelectedElements.length === 2) {
+                // الحصول على العناصر المحددة
+                let termElement, meaningElement;
+                
+                otherSelectedElements.forEach(element => {
+                    if (element.parentElement.classList.contains('matching-column')) {
+                        if (element.textContent === matchingQuestions[parseInt(element.dataset.index)].term) {
+                            termElement = element;
+                        } else {
+                            meaningElement = element;
+                        }
+                    }
+                });
+                
+                if (termElement && meaningElement) {
+                    const termIndex = parseInt(termElement.dataset.index);
+                    const meaningIndex = parseInt(meaningElement.dataset.index);
+                    
+                    // التحقق من صحة المطابقة
+                    const isCorrectMatch = termIndex === meaningIndex;
+                    
+                    // إضافة المطابقة إلى قائمة المطابقات
+                    userAnswers.matching.matches.push({
+                        termIndex: termIndex,
+                        meaningIndex: meaningIndex,
+                        isCorrect: isCorrectMatch
+                    });
+                    
+                    // تحديث حالة العناصر
+                    termElement.classList.remove('selected');
+                    meaningElement.classList.remove('selected');
+                    
+                    termElement.classList.add('matched');
+                    meaningElement.classList.add('matched');
+                    
+                    // إزالة أحداث النقر
+                    termElement.onclick = null;
+                    meaningElement.onclick = null;
+                    
+                    // إعادة تعيين العنصر المحدد
+                    userAnswers.matching.selected = null;
+                    
+                    // تحديث التقدم
+                    updateProgress();
+                    
+                    // إعادة رسم الأسئلة
+                    createMatchingQuestions();
+                }
+            }
+        }
+        
+        // رسم الخطوط بين العناصر المتطابقة
+        function drawMatchingLines() {
+            const linesContainer = document.getElementById('matching-lines');
+            if (!linesContainer) return;
+            
+            // مسح الخطوط الحالية
+            linesContainer.innerHTML = '';
+            
+            // رسم خط لكل مطابقة
+            userAnswers.matching.matches.forEach(match => {
+                // الحصول على العناصر المتطابقة
+                const termElements = document.querySelectorAll('.matching-column:first-child .matching-item');
+                const meaningElements = document.querySelectorAll('.matching-column:last-child .matching-item');
+                
+                const termElement = Array.from(termElements).find(el => parseInt(el.dataset.index) === match.termIndex);
+                const meaningElement = Array.from(meaningElements).find(el => parseInt(el.dataset.index) === match.meaningIndex);
+                
+                if (termElement && meaningElement) {
+                    // حساب إحداثيات الخط
+                    const termRect = termElement.getBoundingClientRect();
+                    const meaningRect = meaningElement.getBoundingClientRect();
+                    const linesRect = linesContainer.getBoundingClientRect();
+                    
+                    const x1 = termRect.right - linesRect.left;
+                    const y1 = termRect.top + termRect.height / 2 - linesRect.top;
+                    const x2 = meaningRect.left - linesRect.left;
+                    const y2 = meaningRect.top + meaningRect.height / 2 - linesRect.top;
+                    
+                    // إنشاء الخط
+                    const line = document.createElement('div');
+                    line.className = 'matching-line';
+                    
+                    // حساب طول وزاوية الخط
+                    const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                    const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+                    
+                    // تعيين نمط الخط
+                    line.style.width = `${length}px`;
+                    line.style.left = `${x1}px`;
+                    line.style.top = `${y1}px`;
+                    line.style.transform = `rotate(${angle}deg)`;
+                    
+                    // تعيين لون الخط حسب صحة المطابقة
+                    line.style.backgroundColor = match.isCorrect ? '#27ae60' : '#e74c3c';
+                    
+                    linesContainer.appendChild(line);
+                }
+            });
+        }
+        
+        // التحقق من الإجابات
+        function checkAnswers() {
+            // التحقق من أسئلة صح أو خطأ
+            trueFalseQuestions.forEach((q, index) => {
+                feedback.trueFalse[index] = userAnswers.trueFalse[index] === q.answer;
+            });
+            
+            // التحقق من أسئلة الاختيار من متعدد
+            multipleChoiceQuestions.forEach((q, index) => {
+                feedback.multipleChoice[index] = userAnswers.multipleChoice[index] === q.answer;
+            });
+            
+            // التحقق من أسئلة إكمال الفراغات
+            fillBlanksQuestions.forEach((q, index) => {
+                feedback.fillBlanks[index] = userAnswers.fillBlanks[index].trim().toLowerCase() === q.answer.toLowerCase();
+            });
+            
+            // التحقق من أسئلة الوصل بين العمودين
+            matchingQuestions.forEach((q, index) => {
+                const match = userAnswers.matching.matches.find(m => m.termIndex === index);
+                feedback.matching[index] = match ? match.isCorrect : false;
+            });
+            
+            // إعادة رسم الأسئلة مع التعليقات
+            createTrueFalseQuestions();
+            createMultipleChoiceQuestions();
+            createFillBlanksQuestions();
+            createMatchingQuestions();
+            
+            // حساب النتيجة وعرضها
+            showResults();
+        }
+        
+        // عرض النتائج
+        function showResults() {
+            const totalQuestions = trueFalseQuestions.length + multipleChoiceQuestions.length + 
+                                  fillBlanksQuestions.length + matchingQuestions.length;
+            
+            let correctAnswers = 0;
+            feedback.trueFalse.forEach(f => { if (f) correctAnswers++; });
+            feedback.multipleChoice.forEach(f => { if (f) correctAnswers++; });
+            feedback.fillBlanks.forEach(f => { if (f) correctAnswers++; });
+            feedback.matching.forEach(f => { if (f) correctAnswers++; });
+            
+            const percentage = Math.round((correctAnswers / totalQuestions) * 100);
+            
+            let messageClass = '';
+            let message = '';
+            
+            if (percentage >= 90) {
+                messageClass = 'score-green';
+                message = 'ممتاز! أنت خبير في JavaScript';
+            } else if (percentage >= 70) {
+                messageClass = 'score-green';
+                message = 'جيد جدًا! لديك معرفة جيدة بـ JavaScript';
+            } else if (percentage >= 50) {
+                messageClass = 'score-yellow';
+                message = 'جيد! يمكنك تحسين معرفتك بـ JavaScript';
+            } else {
+                messageClass = 'score-red';
+                message = 'تحتاج إلى مزيد من الدراسة في JavaScript';
+            }
+            
+            const resultsHTML = `
+                <div class="card result-card">
+                    <h2>نتيجة الاختبار</h2>
+                    <div class="result-score ${messageClass}">${correctAnswers} / ${totalQuestions}</div>
+                    <div class="progress-bar" style="margin: 20px 0;">
+                        <div class="progress" style="width: ${percentage}%;"></div>
+                    </div>
+                    <div class="result-message ${messageClass}">${message}</div>
+                    <button class="btn" id="reset-quiz">إعادة الاختبار</button>
+                </div>
+            `;
+            
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('results-container').style.display = 'block';
+            document.getElementById('results-container').innerHTML = resultsHTML;
+            
+            // إضافة حدث لزر إعادة الاختبار
+            document.getElementById('reset-quiz').addEventListener('click', resetQuiz);
+        }
+        
+        // إعادة تعيين الاختبار
+        function resetQuiz() {
+            userAnswers = {
+                trueFalse: Array(trueFalseQuestions.length).fill(""),
+                multipleChoice: Array(multipleChoiceQuestions.length).fill(""),
+                fillBlanks: Array(fillBlanksQuestions.length).fill(""),
+                matching: {
+                    selected: null,
+                    matches: []
+                }
+            };
+            
+            feedback = {
+                trueFalse: Array(trueFalseQuestions.length).fill(null),
+                multipleChoice: Array(multipleChoiceQuestions.length).fill(null),
+                fillBlanks: Array(fillBlanksQuestions.length).fill(null),
+                matching: Array(matchingQuestions.length).fill(null)
+            };
+            
+            createTrueFalseQuestions();
+            createMultipleChoiceQuestions();
+            createFillBlanksQuestions();
+            createMatchingQuestions();
+            updateProgress();
+            
+            document.getElementById('quiz-container').style.display = 'block';
+            document.getElementById('results-container').style.display = 'none';
+            
+            // إعادة تنشيط التبويب الأول
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelector('.tab[data-tab="true-false"]').classList.add('active');
+            document.getElementById('true-false').classList.add('active');
+        }
+        
+        // ===== التهيئة =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // إنشاء الأسئلة
+            createTrueFalseQuestions();
+            createMultipleChoiceQuestions();
+            createFillBlanksQuestions();
+            createMatchingQuestions();
+            
+            // إضافة أحداث التبويبات
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // إزالة الكلاس النشط من جميع التبويبات
+                    document.querySelectorAll('.tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    
+                    // إزالة الكلاس النشط من جميع محتويات التبويبات
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // إضافة الكلاس النشط للتبويب المحدد ومحتواه
+                    this.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // إضافة حدث للتحقق من الإجابات
+            document.getElementById('check-answers').addEventListener('click', checkAnswers);
+            
+            // تحديث شريط التقدم
+            updateProgress();
+        });
+    </script>
+</body>
+</html>
